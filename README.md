@@ -26,9 +26,9 @@ This is a little example mod to demonstrate the ability of [IM-HarmonyIntegratio
 	    <Reference Include="Harmony">
 		    <HintPath>dll\0Harmony.dll</HintPath>
 	    </Reference>
-		  <Reference Include="Unity.TextMeshPro">
-			  <HintPath>dll\Unity.TextMeshPro.dll</HintPath>
-		  </Reference>
+	    <Reference Include="Unity.TextMeshPro">
+		    <HintPath>dll\Unity.TextMeshPro.dll</HintPath>
+	    </Reference>
     </ItemGroup>
 ```
 3. Open the sln file in Visual Studio
