@@ -9,16 +9,20 @@ This is a little example mod to demonstrate the ability of [IM-HarmonyIntegratio
 
 # IM-HarmonyIntegration Modding Tutorial
 
-Pre-requisites: 
+### Pre-requisites: 
 - [.NET Framework 4.6](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net46)
 - [IM-HarmonyIntegration](https://github.com/ui3TD/IM-HarmonyIntegration)
 - [Visual Studio Community Edition](https://visualstudio.microsoft.com/vs/community/) installed for .Net desktop development
+
+### Instructions:
 
 1. Download the source files here to use as a template
 2. Edit the 'FastForward.csproj' to point to your Assembly-CSharp.dll, and 0Harmony.dll. Other libraries are not required but can be added on an as-needed basis. Assembly-CSharp.dll is in the IM_Data/Managed folder of Idol Manager. 0Harmony.dll is in the BepInEx/core folder of IM-HarmonyIntegration.
 3. Open the sln file in Visual Studio
 4. Build the patch
 5. Find the patch.dll file in bin/Debug to include in your mod
+
+### Notes
 
 Feel free to change names of all of the files/folders and classes/methods for your mod.
 
