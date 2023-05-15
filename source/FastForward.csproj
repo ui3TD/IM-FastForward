@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
-    <AssemblyName>patch</AssemblyName>
+    <AssemblyName>com.tel.fastforward</AssemblyName>
     <Description>IM-HarmonyIntegration Plugin</Description>
     <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
