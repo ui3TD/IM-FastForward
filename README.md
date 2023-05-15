@@ -17,7 +17,20 @@ This is a little example mod to demonstrate the ability of [IM-HarmonyIntegratio
 ### Instructions:
 
 1. Download the source files here to use as a template
-2. Edit the 'FastForward.csproj' to point to your Assembly-CSharp.dll, and 0Harmony.dll. Other libraries are not required but can be added on an as-needed basis. Assembly-CSharp.dll is in the IM_Data/Managed folder of Idol Manager. 0Harmony.dll is in the BepInEx/core folder of IM-HarmonyIntegration.
+2. Edit the following text in 'FastForward.csproj' to point to your Assembly-CSharp.dll, and 0Harmony.dll. Other libraries like Unity.TextMeshPro are not required but can be added on an as-needed basis. Assembly-CSharp.dll is in the IM_Data/Managed folder of Idol Manager. 0Harmony.dll is in the BepInEx/core folder of IM-HarmonyIntegration.
+```xml
+    <ItemGroup>
+	    <Reference Include="Assembly-CSharp">
+		    <HintPath>dll\Assembly-CSharp.dll</HintPath>
+	    </Reference>
+	    <Reference Include="Harmony">
+		    <HintPath>dll\0Harmony.dll</HintPath>
+	    </Reference>
+		  <Reference Include="Unity.TextMeshPro">
+			  <HintPath>dll\Unity.TextMeshPro.dll</HintPath>
+		  </Reference>
+    </ItemGroup>
+```
 3. Open the sln file in Visual Studio
 4. Edit Plugin.cs to develop your mod
 5. Build the solution
