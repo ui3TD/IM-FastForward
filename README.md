@@ -22,7 +22,7 @@ This is a little example mod to demonstrate the ability of [IM-HarmonyIntegratio
 4. Build the patch
 5. Find the patch.dll file in bin/Debug to include in your mod
 
-### Notes
+### Notes:
 
 Feel free to change names of all of the files/folders and classes/methods for your mod.
 
