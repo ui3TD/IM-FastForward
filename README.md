@@ -21,3 +21,5 @@ prereq: [.NET Framework 4.6](https://dotnet.microsoft.com/en-us/download/dotnet-
 Feel free to change names of all of the files/folders and classes/methods for your mod.
 
 If you have issues referencing .NET Framework 4.6, open the commandline (cmd), navigate to the folder in commandline, and run net46_setup.sh to download .NET 4.6 directly to your solution.
+
+Check out [this tutorial](https://outward.fandom.com/wiki/Mod_development_guide/Harmony) for more info, but ignore the part about the Awake() method. IM-HarmonyIntegration does it for you automatically.
