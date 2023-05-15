@@ -17,7 +17,7 @@ This is a little example mod to demonstrate the ability of [IM-HarmonyIntegratio
 ### Instructions:
 
 1. Download the source files here to use as a template
-2. Edit the following text in 'FastForward.csproj' to point to your Assembly-CSharp.dll, and 0Harmony.dll. Other libraries like Unity.TextMeshPro are not required but can be added on an as-needed basis. Assembly-CSharp.dll is in the IM_Data/Managed folder of Idol Manager. 0Harmony.dll is in the BepInEx/core folder of IM-HarmonyIntegration.
+2. Edit the following text in the .csproj file to point to your Assembly-CSharp.dll, and 0Harmony.dll. Other libraries like Unity.TextMeshPro are not required but can be added on an as-needed basis. Assembly-CSharp.dll is in the IM_Data/Managed folder of Idol Manager. 0Harmony.dll is in the BepInEx/core folder of IM-HarmonyIntegration.
 ```xml
     <ItemGroup>
 	    <Reference Include="Assembly-CSharp">
@@ -31,9 +31,17 @@ This is a little example mod to demonstrate the ability of [IM-HarmonyIntegratio
 	    </Reference>
     </ItemGroup>
 ```
-3. Open the sln file in Visual Studio
-4. Edit Plugin.cs to develop your mod. Feel free to change names of all of the files/folders and classes/methods for your mod. Check out [this tutorial](https://outward.fandom.com/wiki/Mod_development_guide/Harmony) for more info, but ignore the part about the Awake() method. IM-HarmonyIntegration does it for you automatically. If you have issues referencing .NET Framework 4.6, open the commandline (cmd), navigate to the folder in commandline, and run net46_setup.sh to download .NET 4.6 directly to your solution. 
-5. Build the solution. 
-6. Find the patch.dll file in bin/Debug to include in your mod
+3. Edit the following text in the .csproj file to use the unique ID for your mod. Recommended to use [Reverse Domain Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation).
+```xml
+<AssemblyName>com.tel.fastforward</AssemblyName>
+```
+4. Open the .sln file in Visual Studio
+5. Edit Plugin.cs to develop your mod. Feel free to change names of all of the files/folders and classes/methods for your mod. Check out [this tutorial](https://outward.fandom.com/wiki/Mod_development_guide/Harmony) for more info, but ignore the part about the Awake() method. IM-HarmonyIntegration does it for you automatically. If you have issues referencing .NET Framework 4.6, open the commandline (cmd), navigate to the folder in commandline, and run net46_setup.sh to download .NET 4.6 directly to your solution. 
+6. Build the solution. 
+7. Find the .dll file in bin/Debug to include in your mod
+8. Add the HarmonyID field with your unique mod ID to your mod's info.json. This will let IM-HarmonyIntegration find your file.
+```json
+"HarmonyID": "com.tel.fastforward"
+```
 
 
