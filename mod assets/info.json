@@ -3,5 +3,6 @@
   "Description": "Press '4' or click the fast-forward button twice to go faster!",
   "Author": "Tel",
   "Version": "1.0",
-  "Tags": ["gameplay"]
+  "Tags": ["gameplay"],
+  "HarmonyID": "com.tel.fastforward"
 }
