@@ -36,7 +36,7 @@ This is a little example mod to demonstrate the ability of [IM-HarmonyIntegratio
 <AssemblyName>com.tel.fastforward</AssemblyName>
 ```
 4. Open the .sln file in Visual Studio
-5. Edit Plugin.cs to develop your mod. Feel free to change names of all of the files/folders and classes/methods for your mod. Check out [this tutorial](https://outward.fandom.com/wiki/Mod_development_guide/Harmony) for more info, but ignore the part about the Awake() method. IM-HarmonyIntegration does it for you automatically. If you have issues referencing .NET Framework 4.6, open the commandline (cmd), navigate to the folder in commandline, and run net46_setup.sh to download .NET 4.6 directly to your solution. 
+5. Edit Plugin.cs to develop your mod. Feel free to change names of all of the files/folders and classes/methods for your mod. Check out [this tutorial](https://outward.fandom.com/wiki/Mod_development_guide/Harmony) for more info, but ignore the part about the Awake() method. IM-HarmonyIntegration does it for you automatically. If you have issues referencing .NET Framework 4.6, open the commandline (cmd), navigate to the folder in commandline, and run net46_setup.bat to download .NET 4.6 directly to your solution. 
 6. Build the solution. 
 7. Find the .dll file in bin/Debug to include in your mod
 8. Add the HarmonyID field, as shown below, with your unique mod ID to your mod's info.json. This will let IM-HarmonyIntegration find your file.
