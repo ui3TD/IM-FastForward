@@ -43,7 +43,8 @@ namespace FastForward
     [HarmonyPatch(typeof(Controls), "Update")]
     public class Controls_Update
     {
-        // Set up a Postfix method that runs when the original method is returned. The Postfix should always return void.
+        // Set up a Postfix method that runs when the original method is completed or returns a value. The Postfix should
+        // always return void.
         static void Postfix()
         {
             // Terminate method if hotkeys are blocked.
