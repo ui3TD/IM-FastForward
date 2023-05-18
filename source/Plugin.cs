@@ -2,6 +2,7 @@
 using UnityEngine;
 using TMPro;
 
+// Rename the namespace to be descriptive of your mod
 namespace FastForward
 {
 
