@@ -5,7 +5,7 @@
 # IM-FastForward
 FastForward mod for Idol Manager. Press '4' or click the fast-forward button twice to speed up time 5x faster!
 
-This is a little example mod to demonstrate the ability of [IM-HarmonyIntegration](https://github.com/ui3TD/IM-HarmonyIntegration)
+This is a little example mod to demonstrate the capabilities of [IM-HarmonyIntegration](https://github.com/ui3TD/IM-HarmonyIntegration)
 
 # IM-HarmonyIntegration Modding Tutorial
 
