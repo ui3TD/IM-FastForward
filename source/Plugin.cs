@@ -14,7 +14,7 @@ namespace FastForward
     {
         // Set up a Prefix patch that runs before the method is run. This method returns false to skip the original method
         // or true to run the original method.
-        // The argument __instance accesses the TimeControlButton instance. This is similar to the C# keyword this when used
+        // The argument __instance accesses the TimeControlButton instance. This is similar to the C# keyword "this" when used
         // in the original method.
         static bool Prefix(TimeControlButton __instance)
         {
