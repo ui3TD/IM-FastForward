@@ -56,7 +56,7 @@
 		<RemoveDir Directories="$(ModOutputDir)/$(ModName)" Condition="Exists('$(ModOutputDir)/$(ModName)')" />
 	</Target>
 
-	<!--After "Build", create the mod folder, copy in the mod dll and assets-->
+	<!--After "Build", create the mod folder, then copy in the mod dll and assets-->
 	<Target Name="PostBuild" AfterTargets="Build">
 		<MakeDir Directories="$(ModOutputDir)\$(ModName)" Condition="!Exists('$(ModOutputDir)\$(ModName)')" />
 		<Exec Command="copy /Y &quot;$(TargetDir)$(AssemblyName).dll&quot; &quot;$(ModOutputDir)\$(ModName)\$(AssemblyName).dll&quot;" />
