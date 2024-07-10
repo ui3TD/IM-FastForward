@@ -43,35 +43,27 @@ git clone https://github.com/ui3TD/IM-FastForward
 
 6. Open the `FastForward.sln` file in Visual Studio.
 
-7. Check the right Solution Explorer panel
-
-8. Edit the following text in the .csproj file to use the unique ID for your mod. Recommended to use [Reverse Domain Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation).
-```xml
-<AssemblyName>com.tel.fastforward</AssemblyName>
-```
-9. Open the .sln file in Visual Studio
-
-10. Check the Solution Explorer to make sure all your .dll files are detected under `Dependencies > Assemblies`. If they aren't then double check steps 2 and 5.
+7. Check the Solution Explorer panel on the right to make sure all your .dll files are detected under `Dependencies > Assemblies`. If they aren't then double check steps 2 and 5.
 
 <p align="center">
   <img src="readme%20assets/solution_explorer.jpg?raw=true" />
 </p>
 
-11. Check the Solution Explorer to check if required NuGet packages were automatically downloaded under `Dependencies > Packages`. If not, right click `Packages` and click `Manage NuGet Packages...` to search for and install the required NuGet packages.
+8. Check the Solution Explorer to check if required NuGet packages were automatically downloaded under `Dependencies > Packages`. If not, right click `Packages` and click `Manage NuGet Packages...` to search for and install the required NuGet packages.
 You can try to run `setup_nuget_packages.bat` to do it automatically.
 
 Required NuGet packages are:
 - Microsoft.NETFramework.ReferenceAssemblies.net46, version 1.0.3
 - UnityEngine.Modules, version 2019.4.23
  
-12. Build the solution by selecting `Build > Build Solution` from the top menu.
+9. Build the solution by selecting `Build > Build Solution` from the top menu.
 
 Congratulations, you've created the mod!
 
 ### Making Your Own Mod
 1. Start with this and modify your file names from within the Visual Studio Solution Explorer.
 
-2. Open the .csproj file `FastForward.csproj` to set your assembly name and mod name. The assembly name will later be input into your mod's `info.json` file as the `HarmonyID`. The mod name will be the name of the mod's folder.
+2. Open the .csproj file `FastForward.csproj` to set your assembly name and mod name. The assembly name is a unique ID of your mod and will later be input into your mod's `info.json` file as the `HarmonyID`. It's recommended to use [Reverse Domain Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation). The mod name will be the name of the mod's folder.
 ```xml
 <AssemblyName>com.tel.fastforward</AssemblyName>
 <ModName>FastForward</ModName>
