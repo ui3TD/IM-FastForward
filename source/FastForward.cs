@@ -41,7 +41,10 @@ namespace FastForward
             double speed = 200 * mult;
 
             // Under these cases, clicking the time control button should behave as normal
-            // (return true to abort the patch and execute the rest of the method)
+            // 1. If the button being clicked is the fast button.
+            // 2. If the speed isn't currently fast.
+            // 3. If the speed is already accelerated.
+            // return true to abort the patch and execute the rest of the method
             if (__instance.Type != mainScript._time_state.fast || staticVars.timeState != mainScript._time_state.fast || staticVars.dateTimeAddMinutesPerSecond == speed)
                 return true;
 
