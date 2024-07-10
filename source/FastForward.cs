@@ -5,6 +5,9 @@ using static FastForward.FastForward;
 
 namespace FastForward
 {
+    /// <summary>
+    /// Class to hold information used throughout the project.
+    /// </summary>
     public class FastForward
     {
         /// <summary>
