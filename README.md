@@ -16,7 +16,7 @@ This is a little example mod to demonstrate the capabilities of [IM-HarmonyInteg
 - [IM-HarmonyIntegration](https://github.com/ui3TD/IM-HarmonyIntegration)
 - [Visual Studio Community Edition](https://visualstudio.microsoft.com/vs/community/) (recommended)
 
-### Getting Started:
+### Getting Started by Recreating This Mod:
 
 1. Clone this git repo to download the source files here. The command will create a `IM-FastForward` folder with all the files downloaded.
 ```bash
@@ -61,7 +61,7 @@ Required NuGet packages are:
 
 Congratulations, you've created the mod!
 
-### Making Your Own Mod
+### Making Your Own Mod Based on This Mod:
 1. Start with this and modify your file names from within the Visual Studio Solution Explorer.
 
 2. Open the .csproj file `FastForward.csproj` to set your assembly name and mod name. The assembly name is a unique ID of your mod and will later be input into your mod's `info.json` file as the `HarmonyID`. It's recommended to use [Reverse Domain Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation). The mod name will be the name of the mod's folder.
