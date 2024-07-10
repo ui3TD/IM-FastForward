@@ -75,7 +75,7 @@ namespace FastForward
             // If the '4' key is detected
             if (Input.GetKeyDown(KeyCode.Alpha4))
             {
-                // Get the multiplier from the in-game variable, with the default
+                // Get the multiplier from the in-game variable, with the default fallback
                 double mult = double.Parse(variables.Get(VARID) ?? DEFAULT_VAR);
 
                 // Calculate the speed
