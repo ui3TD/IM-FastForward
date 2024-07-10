@@ -1,4 +1,5 @@
 
+
 <p align="center">
   <img src="source/assets/thumb.png?raw=true" />
 </p>
@@ -80,7 +81,10 @@ Congratulations, you've created the mod!
 }
 
 ```
-4. Edit the .cs to develop your mod. Check out [this tutorial](https://outward.fandom.com/wiki/Mod_development_guide/Harmony) for more info, but ignore the Awake() method. IM-HarmonyIntegration does it automatically. 
+4. Edit the .cs to develop your mod.
 
-
-Visit the [Idol Manager Official Discord](https://discord.com/invite/83ywHbP) to discuss with others in the modding community.
+Tips:
+- Open `Assembly-CSharp.dll` in [dnSpy](https://github.com/dnSpy/dnSpy/releases/tag/v6.1.8) to explore the game's code to figure out what to patch.
+- Check out official Harmony documentation [here](https://harmony.pardeike.net/articles/intro.html).
+- Check out [this tutorial](https://outward.fandom.com/wiki/Mod_development_guide/Harmony) for more info, but ignore the Awake() method. IM-HarmonyIntegration does it automatically. 
+- Visit the [Idol Manager Official Discord](https://discord.com/invite/83ywHbP) to discuss with others in the modding community.
