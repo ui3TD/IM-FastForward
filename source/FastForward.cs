@@ -34,7 +34,7 @@ namespace FastForward
         /// <returns>Boolean indicating whether the original method should be executed.</returns>
         public static bool Prefix(TimeControlButton __instance)
         {
-            // Get the speed multiplier from the ingame variable (if ModMenus mod is used). If it's null then use the default value.
+            // Get the speed multiplier from the ingame variable (only applicable for ModMenus mod). If it's null then use the default value.
             double mult = double.Parse(variables.Get(VARID) ?? DEFAULT_VAR);
 
             // Calculated the speed after the multiplier.
@@ -78,7 +78,7 @@ namespace FastForward
             // If the '4' key is detected
             if (Input.GetKeyDown(KeyCode.Alpha4))
             {
-                // Get the multiplier from the in-game variable, with the default fallback
+                // Get the multiplier from the in-game variable (only applicable for ModMenus mod), with the default fallback
                 double mult = double.Parse(variables.Get(VARID) ?? DEFAULT_VAR);
 
                 // Calculate the speed
