@@ -63,7 +63,7 @@ Congratulations, you've created the mod!
 1. **Rename Files:**
 Start with this base mod and rename your files within the Visual Studio Solution Explorer.
 2. **Configure the Project:**
-Open the `FastForward.csproj` file to set your assembly name and mod name. The assembly name is a unique ID for your mod and will be used as the `HarmonyID` in your mod's `info.json` file. It's recommended to use [Reverse Domain Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation).
+Open the .csproj file to set your assembly name and mod name. The assembly name is a unique ID for your mod and will be used as the `HarmonyID` in your mod's `info.json` file. It's recommended to use [Reverse Domain Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation).
 ```xml
 <AssemblyName>com.yourdomain.modname</AssemblyName>
 <ModName>YourModName</ModName>
