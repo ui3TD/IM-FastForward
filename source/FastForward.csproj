@@ -1,27 +1,61 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<ModOutputDir>$(SolutionDir)\..\..\Mods</ModOutputDir>
+		<dllDir>$(SolutionDir)\..\..\dll</dllDir>
+		
+		<AssemblyName>com.tel.fastforward</AssemblyName>
+		<ModName>FastForward</ModName>
+		<Description>Idol Manager Mod</Description>
+		<Version>1.0.0</Version>
+		
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<LangVersion>latest</LangVersion>
+		<TargetFramework>net46</TargetFramework>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
-    <AssemblyName>com.tel.fastforward</AssemblyName>
-    <Description>IM-HarmonyIntegration Plugin</Description>
-    <Version>1.0.0</Version>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.3">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="UnityEngine.Modules" Version="2019.4.23">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive; compile</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="UnityEngine.Modules" Version="2019.4.23" IncludeAssets="compile" />
-  </ItemGroup>
-  
-    <ItemGroup>
-	    <Reference Include="Assembly-CSharp">
-		    <HintPath>dll\Assembly-CSharp.dll</HintPath>
-	    </Reference>
-	    <Reference Include="Harmony">
-		    <HintPath>dll\0Harmony.dll</HintPath>
-	    </Reference>
-		<Reference Include="Unity.TextMeshPro">
-			<HintPath>dll\Unity.TextMeshPro.dll</HintPath>
+	<PropertyGroup>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Reference Include="Assembly-CSharp">
+		  <HintPath>$(dllDir)\Assembly-CSharp.dll</HintPath>
 		</Reference>
-    </ItemGroup>
+		<Reference Include="Assembly-CSharp-firstpass">
+			<HintPath>$(dllDir)\Assembly-CSharp-firstpass.dll</HintPath>
+		</Reference>
+		<Reference Include="Harmony">
+			<HintPath>$(dllDir)\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UI">
+			<HintPath>$(dllDir)\UnityEngine.UI.dll</HintPath>
+		</Reference>
+		<Reference Include="Unity.TextMeshPro">
+			<HintPath>$(dllDir)\Unity.TextMeshPro.dll</HintPath>
+		</Reference>
+		<Reference Include="DOTween">
+			<HintPath>$(dllDir)\DOTween.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<Target Name="CleanModOutputDir" BeforeTargets="Clean">
+		<RemoveDir Directories="$(ModOutputDir)/$(ModName)" Condition="Exists('$(ModOutputDir)/$(ModName)')" />
+	</Target>
+	
+
+	<Target Name="PostBuild" AfterTargets="Build">
+		<MakeDir Directories="$(ModOutputDir)\$(ModName)" Condition="!Exists('$(ModOutputDir)\$(ModName)')" />
+		<Exec Command="copy /Y &quot;$(TargetDir)$(AssemblyName).dll&quot; &quot;$(ModOutputDir)\$(ModName)\$(AssemblyName).dll&quot;" />
+		<Exec Command="xcopy /Y /E /I &quot;assets&quot; &quot;$(ModOutputDir)\$(ModName)&quot;" />
+	</Target>
 </Project>

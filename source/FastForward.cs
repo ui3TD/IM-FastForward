@@ -1,68 +1,64 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 using TMPro;
+using static FastForward.FastForward;
 
-// Rename the namespace to be descriptive of your mod
 namespace FastForward
 {
+    public class FastForward
+    {
+        public const string VARID = "FastForward_Multiplier";
+        public const string DEFAULT_VAR = "5";
+    }
 
-    // Speed up time if you click on the fast forward button twice
-    // Point Harmony to the correct method in Assembly-Csharp.dll. The TimeControlButton.OnClick method is where the time
-    // control buttons are defined.
+    /// <summary>
+    /// Patch class for the TimeControlButton's OnClick method to implement faster time acceleration.
+    /// </summary>
     [HarmonyPatch(typeof(TimeControlButton), "OnClick")]
     public class TimeControlButton_OnClick
     {
-        // Set up a Prefix patch that runs before the method is run. This method returns false to skip the original method
-        // or true to run the original method.
-        // The argument __instance accesses the TimeControlButton instance. This is similar to the C# keyword "this" when used
-        // in the original method.
-        static bool Prefix(TimeControlButton __instance)
+        /// <summary>
+        /// Prefix method to enhance the fast forward functionality when clicking the fast forward button twice.
+        /// </summary>
+        /// <param name="__instance">The instance of the TimeControlButton being clicked.</param>
+        /// <returns>Boolean indicating whether the original method should be executed.</returns>
+        public static bool Prefix(TimeControlButton __instance)
         {
-            // Set default output to run the original method
-            bool output = true;
-            
-            // If the fast speed button is clicked AND the time is already at fast speed AND the speed isn't already at 1000
-            if (__instance.Type == mainScript._time_state.fast && staticVars.timeState == mainScript._time_state.fast && staticVars.dateTimeAddMinutesPerSecond != 1000)
-            {
-                // Set the speed to 1000 (5x faster than usual)
-                staticVars.dateTimeAddMinutesPerSecond = 1000;
-                
-                // Change the TimeControls_Fast GUI color to gold
-                Camera.main.GetComponent<mainScript>().TimeControls_Fast.GetComponent<TextMeshProUGUI>().color = mainScript.gold32;
-                
-                // Skip the original method, so that the button doesn't use the default behaviour
-                output = false;
-            }
-            return output;
+            double mult = double.Parse(variables.Get(VARID) ?? DEFAULT_VAR);
+            double speed = 200 * mult;
+
+            if (__instance.Type != mainScript._time_state.fast || staticVars.timeState != mainScript._time_state.fast || staticVars.dateTimeAddMinutesPerSecond == speed)
+                return true;
+
+            staticVars.dateTimeAddMinutesPerSecond = speed;
+            Camera.main.GetComponent<mainScript>().TimeControls_Fast.GetComponent<TextMeshProUGUI>().color = mainScript.gold32;
+
+            return false;
         }
 
     }
-    
-    // Speed up time if the user presses '4'.
-    // The Controls.Update method is where hotkeys are defined.
+
+    /// <summary>
+    /// Patch class for the Controls' Update method to implement hotkey-based time acceleration.
+    /// </summary>
     [HarmonyPatch(typeof(Controls), "Update")]
     public class Controls_Update
     {
-        // Set up a Postfix method that runs when the original method is completed or returns a value. The Postfix should
-        // always return void.
-        static void Postfix()
+        /// <summary>
+        /// Postfix method to add hotkey functionality for speeding up time when pressing the '4' key.
+        /// </summary>
+        public static void Postfix()
         {
-            // Terminate method if hotkeys are blocked.
             if (mainScript.IsBlockingHotkeys())
-            {
                 return;
-            }
-            
-            // On '4' hotkey press
+
             if (Input.GetKeyDown(KeyCode.Alpha4))
             {
-                // Set the time to fast
+                double mult = double.Parse(variables.Get(VARID) ?? DEFAULT_VAR);
+                double speed = 200 * mult;
                 Camera.main.GetComponent<mainScript>().Time_SetState(mainScript._time_state.fast);
-                
-                // Set the speed to 1000
-                staticVars.dateTimeAddMinutesPerSecond = 1000;
-                
-                // Change the TimeControls_Fast GUI color to gold
+                staticVars.dateTimeAddMinutesPerSecond = speed;
+
                 Camera.main.GetComponent<mainScript>().TimeControls_Fast.GetComponent<TextMeshProUGUI>().color = mainScript.gold32;
             }
         }
