@@ -91,4 +91,4 @@ Congratulations, you've created the mod!
 4. Edit the .cs to develop your mod. Check out [this tutorial](https://outward.fandom.com/wiki/Mod_development_guide/Harmony) for more info, but ignore the Awake() method. IM-HarmonyIntegration does it automatically. 
 
 
-
+Visit the [Idol Manager Official Discord](https://discord.com/invite/83ywHbP) to discuss with others in the modding community.
