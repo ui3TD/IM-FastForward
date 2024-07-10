@@ -44,7 +44,7 @@ namespace FastForward
             // 1. If the button being clicked isn't the fast button.
             // 2. If the speed isn't currently fast.
             // 3. If the speed is already accelerated.
-            // return true to abort the patch and execute the rest of the method
+            // return true to abort the patch and execute the original method
             if (__instance.Type != mainScript._time_state.fast 
                 || staticVars.timeState != mainScript._time_state.fast 
                 || staticVars.dateTimeAddMinutesPerSecond == speed)
