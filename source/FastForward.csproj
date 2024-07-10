@@ -1,18 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
+		<!--Define key directories-->
 		<ModOutputDir>$(SolutionDir)\..\..\Mods</ModOutputDir>
 		<dllDir>$(SolutionDir)\..\..\dll</dllDir>
-		
+
+		<!--Define key mod info-->
 		<AssemblyName>com.tel.fastforward</AssemblyName>
 		<ModName>FastForward</ModName>
+
+		<!--Define other assembly info-->
 		<Description>Idol Manager Mod</Description>
 		<Version>1.0.0</Version>
-		
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+		<!--Define C# and .NET version-->
 		<LangVersion>latest</LangVersion>
 		<TargetFramework>net46</TargetFramework>
 	</PropertyGroup>
 
+	<!--Reference required NuGet packages (ensure the 'compile' asset type is included)-->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.3">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,9 +29,7 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<PropertyGroup>
-	</PropertyGroup>
-
+	<!--Reference key DLL files. Edit as needed.-->
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp">
 		  <HintPath>$(dllDir)\Assembly-CSharp.dll</HintPath>
@@ -47,12 +50,13 @@
 			<HintPath>$(dllDir)\DOTween.dll</HintPath>
 		</Reference>
 	</ItemGroup>
-
+	
+	<!--Upon "Clean", remove the mod folder and its contents-->
 	<Target Name="CleanModOutputDir" BeforeTargets="Clean">
 		<RemoveDir Directories="$(ModOutputDir)/$(ModName)" Condition="Exists('$(ModOutputDir)/$(ModName)')" />
 	</Target>
-	
 
+	<!--After "Build", create the mod folder, copy in the mod dll and assets-->
 	<Target Name="PostBuild" AfterTargets="Build">
 		<MakeDir Directories="$(ModOutputDir)\$(ModName)" Condition="!Exists('$(ModOutputDir)\$(ModName)')" />
 		<Exec Command="copy /Y &quot;$(TargetDir)$(AssemblyName).dll&quot; &quot;$(ModOutputDir)\$(ModName)\$(AssemblyName).dll&quot;" />
