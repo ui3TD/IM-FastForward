@@ -17,7 +17,7 @@
 		<TargetFramework>net46</TargetFramework>
 	</PropertyGroup>
 
-	<!--Reference required NuGet packages (ensure the 'compile' asset type is included)-->
+	<!--Reference required NuGet packages (ensure the 'compile' asset type is included for UnityEngine)-->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.3">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
