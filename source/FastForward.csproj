@@ -4,15 +4,22 @@
 		<ModOutputDir>$(SolutionDir)\..\..\Mods</ModOutputDir>
 		<dllDir>$(SolutionDir)\..\..\dll</dllDir>
 
-		<!--Define key mod info-->
-		<AssemblyName>com.tel.fastforward</AssemblyName>
+		<!--Define the mod's info.json-->
 		<ModName>FastForward</ModName>
+		<HarmonyID>com.tel.fastforward</HarmonyID>
+		<ModDescription>Press '4' or click the fast-forward button twice to go faster!</ModDescription>
+		<Authors>Tel</Authors>
+		<Version>1.2.0</Version>
+		<Tags>["gameplay"]</Tags>
 
-		<!--Define other assembly info-->
+		<!--For the JSON Load Order mod (leave it at 0 if not using)-->
+		<JSONLoadOrder>0</JSONLoadOrder>
+
+		<!--Other assembly info-->
+		<AssemblyName>$(HarmonyID)</AssemblyName>
 		<Description>Idol Manager Mod</Description>
-		<Version>1.0.0</Version>
 
-		<!--Define C# and .NET version-->
+		<!--C# and .NET version-->
 		<LangVersion>latest</LangVersion>
 		<TargetFramework>net46</TargetFramework>
 	</PropertyGroup>
@@ -23,14 +30,14 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="UnityEngine.Modules" Version="2019.4.23" PrivateAssets="false">
-		  <IncludeAssets>compile</IncludeAssets>
+			<IncludeAssets>compile</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 
 	<!--Reference key DLL files. Edit as needed.-->
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp" private="false">
-		  <HintPath>$(dllDir)\Assembly-CSharp.dll</HintPath>
+			<HintPath>$(dllDir)\Assembly-CSharp.dll</HintPath>
 		</Reference>
 		<Reference Include="Assembly-CSharp-firstpass" private="false">
 			<HintPath>$(dllDir)\Assembly-CSharp-firstpass.dll</HintPath>
@@ -60,4 +67,50 @@
 		<Exec Command="copy /Y &quot;$(TargetDir)$(AssemblyName).dll&quot; &quot;$(ModOutputDir)\$(ModName)\$(AssemblyName).dll&quot;" />
 		<Exec Command="xcopy /Y /E /I &quot;assets&quot; &quot;$(ModOutputDir)\$(ModName)&quot;" />
 	</Target>
+
+	<!--Create the mod's info.json file by calling the -->
+	<Target Name="CreateInfoFile" AfterTargets="Build">
+		<CreateInfoJSON
+			OutputFilePath="$(ModOutputDir)\$(ModName)\info.json"
+			ModName="$(ModName)"
+			AssemblyName="$(AssemblyName)"
+			ModDescription="$(ModDescription)"
+			Version="$(Version)"
+			Authors="$(Authors)"
+			Tags="$(Tags)"
+			JSONLoadOrder="$(JSONLoadOrder)" />
+	</Target>
+
+	<!--Task to create the info.json file-->
+	<UsingTask TaskName="CreateInfoJSON" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+		<ParameterGroup>
+		<OutputFilePath ParameterType="System.String" Required="true" />
+		<ModName ParameterType="System.String" Required="true" />
+		<AssemblyName ParameterType="System.String" Required="true" />
+		<ModDescription ParameterType="System.String" Required="true" />
+		<Version ParameterType="System.String" Required="true" />
+		<Authors ParameterType="System.String" Required="true" />
+		<Tags ParameterType="System.String" Required="true" />
+		<JSONLoadOrder ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Using Namespace="System.IO"/>
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+var content = $@"{{
+""Title"": ""{ModName}"",
+""Description"": ""{ModDescription}"",
+""Authors"": ""{Authors}"",
+""Version"": ""{Version}"",
+""Tags"": {Tags},
+""JSONLoadOrder"": {JSONLoadOrder},
+""HarmonyID"": ""{AssemblyName}""
+}}";
+
+File.WriteAllText(OutputFilePath, content);
+				]]>
+			</Code>
+		</Task>
+	</UsingTask>
+
 </Project>

@@ -1,3 +1,4 @@
+
 <p align="center">
   <img src="source/assets/thumb.png?raw=true" />
 </p>
@@ -62,24 +63,18 @@ Congratulations, you've created the mod!
 ### Making Your Own Mod Based on This Mod:
 1. **Rename Files:**
 Start with this base mod and rename your files within the Visual Studio Solution Explorer.
-2. **Configure the Project:**
-Open the .csproj file to set your assembly name and mod name. The assembly name is a unique ID for your mod and will be used as the `HarmonyID` in your mod's `info.json` file. It's recommended to use [Reverse Domain Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation).
+2. **Configure the Mod Info:**
+Open the .csproj file to input all of your mod information. The .csproj file is set up to automatically generate the mod `info.json` file. For `HarmonyID`, it's recommended to use [Reverse Domain Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) so that the ID is unique and organized.
 ```xml
-<AssemblyName>com.yourdomain.modname</AssemblyName>
-<ModName>YourModName</ModName>
+		<ModName>YourModName</ModName>
+		<HarmonyID>com.yourdomain.modname</HarmonyID>
+		<ModDescription>Input your mod description here</ModDescription>
+		<Authors>YourName</Authors>
+		<Version>1.0.0</Version>
+		<Tags>["gameplay"]</Tags>
 ```
 3. **Update Mod Files:**
-Modify all your mod's files in the `assets` folder. Set up your `info.json` with the appropriate `Title` and `HarmonyID`.
-```json
-{
-  "Title": "YourModName",
-  "Description": "Description of your mod.",
-  "Author": "YourName",
-  "Version": "1.0",
-  "Tags": ["gameplay"],
-  "HarmonyID": "com.yourdomain.modname"
-}
-```
+Modify all your mod's files in the `assets` folder. As noted in Step 2, the `info.json` will be automatically generated.
 4. **Develop Your Mod:**
 Edit the .cs to develop your mod.
 
