@@ -37,7 +37,7 @@ namespace FastForward
             // Get the speed multiplier from the ingame variable (only applicable for ModMenus mod). If it's null then use the default value.
             double mult = double.Parse(variables.Get(VARID) ?? DEFAULT_VAR);
 
-            // Calculated the speed after the multiplier.
+            // Calculate the speed after the multiplier.
             double speed = 200 * mult;
 
             // Under these cases, clicking the time control button should behave as normal
