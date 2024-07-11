@@ -1,5 +1,3 @@
-
-
 <p align="center">
   <img src="source/assets/thumb.png?raw=true" />
 </p>
