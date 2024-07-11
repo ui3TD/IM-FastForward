@@ -98,13 +98,13 @@
 			<Code Type="Fragment" Language="cs">
 				<![CDATA[
 var content = $@"{{
-""Title"": ""{ModName}"",
-""Description"": ""{ModDescription}"",
-""Authors"": ""{Authors}"",
-""Version"": ""{Version}"",
-""Tags"": {Tags},
-""JSONLoadOrder"": {JSONLoadOrder},
-""HarmonyID"": ""{AssemblyName}""
+	""Title"": ""{ModName}"",
+	""Description"": ""{ModDescription}"",
+	""Authors"": ""{Authors}"",
+	""Version"": ""{Version}"",
+	""Tags"": {Tags},
+	""JSONLoadOrder"": {JSONLoadOrder},
+	""HarmonyID"": ""{AssemblyName}""
 }}";
 
 File.WriteAllText(OutputFilePath, content);
