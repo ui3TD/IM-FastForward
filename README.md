@@ -1,4 +1,5 @@
 
+
 <p align="center">
   <img src="source/assets/thumb.png?raw=true" />
 </p>
@@ -53,17 +54,23 @@ In the Solution Explorer, ensure all your .dll files are detected under `Depende
 
 8. **Check NuGet Packages:**
  Ensure required NuGet packages are installed. If they are not automatically downloaded, you can try running `setup_nuget_packages.bat` to install the packages. Otherwise, right-click `Packages` under `Dependencies` in the Solution Explorer and select `Manage NuGet Packages...` to search for and install the required packages:
-    -   `Microsoft.NETFramework.ReferenceAssemblies.net46`, version 1.0.3
-    -   `UnityEngine.Modules`, version 2019.4.23
+    -   Package: `Microsoft.NETFramework.ReferenceAssemblies.net46`
+    Version: 1.0.3
+    Source: http://api.nuget.org/v3/index.json
+    -   `UnityEngine.Modules`
+    Version: 2019.4.23
+    Source: https://nuget.bepinex.dev/v3/index.json
 9. **Build the Solution:**
 To build the solution, select `Build > Build Solution` from the top menu in Visual Studio.
 
 Congratulations, you've created the mod!
 
 ### Making Your Own Mod Based on This Mod:
-1. **Rename Files:**
+1. **Enable Debug Console:** 
+Edit the `Idol Manager\BepInEx\config\BepInEx.cfg` file. Under `[Logging.Console]`, set `Enabled = true`. This will allow you to see the debug console when you run Idol Manager.
+2. **Rename Files:**
 Start with this base mod and rename your files within the Visual Studio Solution Explorer.
-2. **Configure the Mod Info:**
+3. **Configure the Mod Info:**
 Open the .csproj file to input all of your mod information. The .csproj file is set up to automatically generate the mod `info.json` file. For `HarmonyID`, it's recommended to use [Reverse Domain Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) so that the ID is unique and organized.
 ```xml
 <ModName>YourModName</ModName>
@@ -73,9 +80,9 @@ Open the .csproj file to input all of your mod information. The .csproj file is 
 <Version>1.0.0</Version>
 <Tags>["gameplay"]</Tags>
 ```
-3. **Update Mod Files:**
+4. **Update Mod Files:**
 Modify all your mod's files in the `assets` folder. As noted in Step 2, the `info.json` will be automatically generated.
-4. **Develop Your Mod:**
+5. **Develop Your Mod:**
 Edit the .cs to develop your mod.
 
 ### Tips:
