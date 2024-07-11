@@ -86,5 +86,5 @@ Edit the .cs to develop your mod.
 ### Tips:
 - Open `Assembly-CSharp.dll` in [dnSpy](https://github.com/dnSpy/dnSpy/releases/tag/v6.1.8) to explore the game's code and identify what to patch.
 - Check out the official Harmony documentation [here](https://harmony.pardeike.net/articles/intro.html).
-- Check out [this tutorial](https://outward.fandom.com/wiki/Mod_development_guide/Harmony) for more info (ignore the `Awake()` method as IM-HarmonyIntegration handles it automatically).
+- [This](https://www.youtube.com/watch?v=WmuOjlhulyo) is a great Youtube tutorial introducing Harmony.
 - Join the [Idol Manager Official Discord](https://discord.com/invite/83ywHbP) to discuss with others in the modding community.
