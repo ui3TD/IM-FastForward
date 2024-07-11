@@ -66,12 +66,12 @@ Start with this base mod and rename your files within the Visual Studio Solution
 2. **Configure the Mod Info:**
 Open the .csproj file to input all of your mod information. The .csproj file is set up to automatically generate the mod `info.json` file. For `HarmonyID`, it's recommended to use [Reverse Domain Name Notation](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) so that the ID is unique and organized.
 ```xml
-		<ModName>YourModName</ModName>
-		<HarmonyID>com.yourdomain.modname</HarmonyID>
-		<ModDescription>Input your mod description here</ModDescription>
-		<Authors>YourName</Authors>
-		<Version>1.0.0</Version>
-		<Tags>["gameplay"]</Tags>
+<ModName>YourModName</ModName>
+<HarmonyID>com.yourdomain.modname</HarmonyID>
+<ModDescription>Input your mod description here</ModDescription>
+<Authors>YourName</Authors>
+<Version>1.0.0</Version>
+<Tags>["gameplay"]</Tags>
 ```
 3. **Update Mod Files:**
 Modify all your mod's files in the `assets` folder. As noted in Step 2, the `info.json` will be automatically generated.
@@ -80,6 +80,6 @@ Edit the .cs to develop your mod.
 
 ### Tips:
 - Open `Assembly-CSharp.dll` in [dnSpy](https://github.com/dnSpy/dnSpy/releases/tag/v6.1.8) to explore the game's code and identify what to patch.
-- Check out official Harmony documentation [here](https://harmony.pardeike.net/articles/intro.html).
+- Check out the official Harmony documentation [here](https://harmony.pardeike.net/articles/intro.html).
 - Check out [this tutorial](https://outward.fandom.com/wiki/Mod_development_guide/Harmony) for more info (ignore the `Awake()` method as IM-HarmonyIntegration handles it automatically).
 - Join the [Idol Manager Official Discord](https://discord.com/invite/83ywHbP) to discuss with others in the modding community.
