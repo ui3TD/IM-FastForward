@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="source/assets/thumb.png?raw=true" />
+  <img src="readme assets/header.jpg?raw=true" />
 </p>
 
 # IM-FastForward
