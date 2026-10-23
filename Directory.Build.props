@@ -1,0 +1,164 @@
+<Project>
+	<!--
+	MSBuild reads this file before every project below this folder, so the mod's csproj only needs the
+	values that go into info.json. tests\Directory.Build.props replaces this file for the test project.
+	-->
+	<PropertyGroup>
+		<!--Where builds deploy the mod: the game's Mods folder. Override with -p:ModOutputDir=<folder>;
+		-p:DeployToGame=false builds without deploying.-->
+		<ModOutputDirRelease>$(APPDATA)\..\LocalLow\Glitch Pitch\Idol Manager\Mods</ModOutputDirRelease>
+		<ModOutputDirDebug>$(APPDATA)\..\LocalLow\Glitch Pitch\Idol Manager\Mods</ModOutputDirDebug>
+		<DeployToGame Condition="'$(DeployToGame)' == ''">true</DeployToGame>
+		<!--Game DLLs: the folder in the IDOL_MANAGER_GAME_DLLS environment variable when set, else a dll folder beside this repo.-->
+		<dllDir Condition="'$(IDOL_MANAGER_GAME_DLLS)' != ''">$(IDOL_MANAGER_GAME_DLLS)</dllDir>
+		<dllDir Condition="'$(dllDir)' == ''">$(MSBuildThisFileDirectory)..\dll</dllDir>
+		<BeforeMicrosoftNETSdkTargets>$(BeforeMicrosoftNETSdkTargets);$(MSBuildThisFileDirectory)Mod.BeforeSdk.targets</BeforeMicrosoftNETSdkTargets>
+
+		<!--Other assembly info-->
+		<Description>Idol Manager Mod</Description>
+
+		<!--C# version, and the .NET version the game runs-->
+		<LangVersion>latest</LangVersion>
+		<TargetFramework>net46</TargetFramework>
+
+		<!--The compiler writes source file paths into the DLL. This replaces the repo's folder with /_/, so
+		the DLL you publish doesn't contain your Windows user name.-->
+		<PathMap>$(MSBuildThisFileDirectory)=/_/</PathMap>
+	</PropertyGroup>
+
+	<!--The mod compiles against these. AssemblyName (= HarmonyID) is set in Mod.BeforeSdk.targets, after the csproj defines HarmonyID.-->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net46" Version="1.0.3">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<!--Unity's API, without its native code: enough to compile against-->
+		<PackageReference Include="UnityEngine.Modules" Version="2019.4.23" IncludeAssets="compile" />
+		<!--Compiles against a copy of Assembly-CSharp with every member public, so patch targets can use
+		nameof(...) and a renamed game member is a compile error. Runtime access still goes through reflection.-->
+		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" PrivateAssets="all" ExcludeAssets="contentFiles" />
+	</ItemGroup>
+
+	<!--The game's own DLLs. private="false": the game already has them, so they aren't copied to the mod.-->
+	<ItemGroup>
+		<Reference Include="Assembly-CSharp" private="false" Publicize="true">
+			<HintPath>$(dllDir)\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp-firstpass" private="false">
+			<HintPath>$(dllDir)\Assembly-CSharp-firstpass.dll</HintPath>
+		</Reference>
+		<Reference Include="Harmony" private="false">
+			<HintPath>$(dllDir)\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UI" private="false">
+			<HintPath>$(dllDir)\UnityEngine.UI.dll</HintPath>
+		</Reference>
+		<Reference Include="Unity.TextMeshPro" private="false">
+			<HintPath>$(dllDir)\Unity.TextMeshPro.dll</HintPath>
+		</Reference>
+		<Reference Include="DOTween" private="false">
+			<HintPath>$(dllDir)\DOTween.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<ModOutputDir Condition="'$(ModOutputDir)' == ''">$(ModOutputDirDebug)</ModOutputDir>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<ModOutputDir Condition="'$(ModOutputDir)' == ''">$(ModOutputDirRelease)</ModOutputDir>
+		<!--Release builds are what gets published: no warnings allowed-->
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<!--The publicizer also adds IgnoresAccessChecksTo and unsafe code, for accessing private members directly.
+	The mod only uses the public copy for names, so leave both out: the DLL stays as it would be without it.-->
+	<Target Name="PublicizeNamesOnly" AfterTargets="Publicize">
+		<ItemGroup>
+			<Compile Remove="$(GeneratedIgnoresAccessChecksToFile)" />
+		</ItemGroup>
+		<PropertyGroup>
+			<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+		</PropertyGroup>
+	</Target>
+
+	<!--Clean removes the deployed mod folder-->
+	<Target Name="CleanModOutputDir" BeforeTargets="Clean" Condition="'$(DeployToGame)' == 'true'">
+		<RemoveDir Directories="$(ModOutputDir)\$(ModName)" Condition="Exists('$(ModOutputDir)\$(ModName)')" />
+	</Target>
+
+	<!--Copy the DLL and assets\ (keeping subfolders) into the mod's folder. Copy creates the folder, retries
+	while the game holds a file open, and skips files that haven't changed.-->
+	<Target Name="DeployMod" AfterTargets="Build" Condition="'$(DeployToGame)' == 'true'">
+		<ItemGroup>
+			<ModAsset Include="$(MSBuildProjectDirectory)\assets\**\*" />
+		</ItemGroup>
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModOutputDir)\$(ModName)"
+			SkipUnchangedFiles="true" Retries="10" RetryDelayMilliseconds="500" />
+		<Copy SourceFiles="@(ModAsset)" DestinationFiles="@(ModAsset->'$(ModOutputDir)\$(ModName)\%(RecursiveDir)%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true" Retries="10" RetryDelayMilliseconds="500" />
+	</Target>
+
+	<!--Create the mod's info.json file with the CreateInfoJSON task below-->
+	<Target Name="CreateInfoFile" AfterTargets="DeployMod" Condition="'$(DeployToGame)' == 'true'">
+		<CreateInfoJSON
+			OutputFilePath="$(ModOutputDir)\$(ModName)\info.json"
+			ModName="$(ModName)"
+			AssemblyName="$(AssemblyName)"
+			ModDescription="$(ModDescription)"
+			Version="$(Version)"
+			Authors="$(Authors)"
+			Tags="$(Tags)"
+			JSONLoadOrder="$(JSONLoadOrder)" />
+	</Target>
+
+	<!--Task to create the info.json file-->
+	<UsingTask TaskName="CreateInfoJSON" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+		<ParameterGroup>
+			<OutputFilePath ParameterType="System.String" Required="true" />
+			<ModName ParameterType="System.String" Required="true" />
+			<AssemblyName ParameterType="System.String" Required="true" />
+			<ModDescription ParameterType="System.String" Required="true" />
+			<Version ParameterType="System.String" Required="true" />
+			<Authors ParameterType="System.String" Required="true" />
+			<Tags ParameterType="System.String" Required="true" />
+			<JSONLoadOrder ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Using Namespace="System.IO"/>
+			<Using Namespace="System.Globalization"/>
+			<Using Namespace="System.Text.RegularExpressions"/>
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+// Text values are escaped as JSON strings; Tags and JSONLoadOrder are raw JSON, so check their shape.
+Func<string, string> J = s => "\"" + s.Replace("\\", "\\\\").Replace("\"", "\\\"")
+	.Replace("\r", "").Replace("\n", "\\n").Replace("\t", "\\t") + "\"";
+if (!Regex.IsMatch(Tags, @"^\[\s*(""[^""\\]*""\s*(,\s*""[^""\\]*""\s*)*)?\]$"))
+{
+	Log.LogError("<Tags> must be a JSON array of strings, like [\"gameplay\"]; got: " + Tags);
+	return false;
+}
+int loadOrder;
+if (!int.TryParse(JSONLoadOrder, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out loadOrder))
+{
+	Log.LogError("<JSONLoadOrder> must be a whole number; got: " + JSONLoadOrder);
+	return false;
+}
+
+var content = $@"{{
+	""Title"": {J(ModName)},
+	""Description"": {J(ModDescription)},
+	""Authors"": {J(Authors)},
+	""Version"": {J(Version)},
+	""Tags"": {Tags},
+	""JSONLoadOrder"": {loadOrder},
+	""HarmonyID"": {J(AssemblyName)}
+}}";
+
+File.WriteAllText(OutputFilePath, content);
+				]]>
+			</Code>
+		</Task>
+	</UsingTask>
+
+</Project>
