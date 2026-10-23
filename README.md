@@ -10,7 +10,7 @@ mod installed, a slider sets the speed from 1x to 20x.
 
 This repo is a starting point for writing your own Harmony mods for Idol Manager with
 [IM-HarmonyIntegration](https://github.com/ui3TD/IM-HarmonyIntegration). It has the mod, a build setup that
-deploys straight to the game, and unit tests. [Tel-Mod-Library](https://github.com/ui3TD/Tel-Mod-Library)
+deploys straight to the game, unit tests, in-game tests and a script that publishes to the Steam Workshop. [Tel-Mod-Library](https://github.com/ui3TD/Tel-Mod-Library)
 uses the same setup for many more mods, so look there for bigger examples.
 
 ## What you need
@@ -20,6 +20,7 @@ uses the same setup for many more mods, so look there for bigger examples.
   game's .NET Framework 4.6 without installing that framework.
 - An editor: [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/), or
   [VS Code](https://code.visualstudio.com/) with the C# Dev Kit extension.
+- For the in-game tests and the publish script: [Python](https://www.python.org/) 3.10 or later.
 
 ## Set up
 
@@ -129,6 +130,9 @@ The files in `source/assets/` are copied into the mod's folder as they are:
 
    Change `ModName` and `HarmonyID` before you build your own mod. If they stay the same, your build
    replaces FastForward in the game.
+
+   Change them in the in-game tests too: `MOD_FOLDER` and `HARMONY_ID` in
+   `tests/InGameTests.FastForward/run.py`, the `HarmonyId` in its tests, and the project's name.
 4. Replace the files in `source/assets/` with your mod's files. The folders in `assets` match the folders
    the game reads in a mod.
 5. Write your patches. To find what to patch, open `Assembly-CSharp.dll` in [ILSpy](https://github.com/icsharpcode/ILSpy)
@@ -184,7 +188,51 @@ Two things to know when you write tests like these:
 - Unity's `==` says every fake object is null and equal to every other one. Compare fakes with
   `ReferenceEquals` or `is null`.
 
+## In-game tests
+
+The unit tests can't run Unity itself. The in-game tests run inside the real game, with your mod loaded,
+using [IM-InGameTests](https://github.com/ui3TD/IM-InGameTests). The game opens, loads a test save, runs
+the tests and closes by itself, in about a minute. Your own saves and settings aren't touched.
+
+1. Clone IM-InGameTests next to this repo, and read its README's requirements.
+2. Keep Steam running, and run:
+   ```bash
+   python tests/InGameTests.FastForward/run.py
+   ```
+   It builds the mod and the tests, then runs them with only this mod loaded.
+
+`tests/InGameTests.FastForward/FastForwardTests.cs` has one test. It turns on FastForward's top speed on
+the game's real clock and checks that four in-game weeks at that speed skip no day and no week. Test only
+what the unit tests can't: starting the game takes time. IM-InGameTests' README explains how to write
+tests and lists its helpers.
+
+The test project isn't in `FastForward.sln`, so the solution builds without IM-InGameTests.
+
 ## Publishing
+
+### With the publish script
+
+`tools/publish_workshop.py` builds the mod and uploads it with [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD):
+the content, `thumb.png`, the title, the whole `steam description.txt` and the changelog line for the
+current version as the change note. Nothing is copy-pasted. It only publishes a mod whose files are
+committed and pushed to GitHub, so the Workshop always matches the published source.
+
+1. One time: install SteamCMD to `C:\steamcmd` (or set the `STEAMCMD` environment variable to
+   `steamcmd.exe`), and log in once with `steamcmd +login <your Steam user name> +quit`. Type your password
+   and Steam Guard code there; SteamCMD remembers the login.
+2. Run `python tools/check_repo.py`. It checks the csproj values and that the changelog has a line for
+   the current version.
+3. The first upload: `python tools/publish_workshop.py --new`. It creates an unlisted Workshop item and
+   writes its id into the csproj as `<WorkshopID>`; commit that. On the item's page, add the tags, add
+   [Harmony Checker](https://steamcommunity.com/sharedfiles/filedetails/?id=3102983863) under
+   Add/Remove Required Items, and make the mod public.
+4. Updates: raise `Version`, add a changelog line, commit, push, and run `python tools/publish_workshop.py`.
+   `--description-only` updates only the page text; `--dry-run` shows what would be uploaded.
+
+FastForward itself is published from [Tel-Mod-Library](https://github.com/ui3TD/Tel-Mod-Library), so this
+repo has no `<WorkshopID>`.
+
+### From the game
 
 The game uploads mods to the Steam Workshop itself:
 
