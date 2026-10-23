@@ -1,0 +1,65 @@
+using System.Globalization;
+using System.Threading;
+using Xunit;
+using static FastForward.Tests.TestGame;
+
+namespace FastForward.Tests
+{
+    public class MultiplierTests
+    {
+        [Theory]
+        [InlineData(null, 5d)]
+        [InlineData("", 5d)]
+        [InlineData("  ", 5d)]
+        [InlineData("abc", 5d)]
+        [InlineData("2,5", 5d)]
+        [InlineData("NaN", 5d)]
+        [InlineData("Infinity", 5d)]
+        [InlineData("10", 10d)]
+        [InlineData("2.5", 2.5d)]
+        [InlineData("0.5", 1d)]
+        [InlineData("-3", 1d)]
+        [InlineData("28", 28d)]
+        [InlineData("28.8", 28d)]
+        [InlineData("100", 28d)]
+        public void MultiplierIsParsedAndClamped(string raw, double expected)
+        {
+            SetMultiplier(raw);
+            Assert.Equal(expected, FastForward.GetConfiguredMultiplier());
+        }
+
+        /// <summary>
+        /// A dot decimal must not be read as a thousands separator on e.g. German Windows.
+        /// </summary>
+        [Fact]
+        public void DotDecimal_IgnoresRegionalFormat()
+        {
+            CultureInfo previous = Thread.CurrentThread.CurrentCulture;
+            try
+            {
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
+                SetMultiplier("2.5");
+                Assert.Equal(2.5d, FastForward.GetConfiguredMultiplier());
+            }
+            finally
+            {
+                Thread.CurrentThread.CurrentCulture = previous;
+            }
+        }
+
+        [Fact]
+        public void SpeedIsVanillaFastTimesMultiplier()
+        {
+            SetMultiplier("10");
+            Assert.Equal(2000d, FastForward.GetConfiguredSpeed());
+        }
+
+        [Fact]
+        public void ApplySuperFast_NullMain_DoesNothing()
+        {
+            staticVars.dateTimeAddMinutesPerSecond = 200d;
+            FastForward.ApplySuperFast(null);
+            Assert.Equal(200d, staticVars.dateTimeAddMinutesPerSecond);
+        }
+    }
+}
