@@ -82,7 +82,7 @@ saved to `BepInEx\LogOutput.log`.
 
 ## How the mod works
 
-All the code is in `source/FastForward.cs`. It has two Harmony patches. Each one is a class with a
+The patches are in `source/FastForward.cs`. It has two Harmony patches. Each one is a class with a
 `[HarmonyPatch]` attribute that names the game's class and method:
 
 ```csharp
@@ -94,26 +94,37 @@ public class TimeControlButton_OnClick
 of the patch failing in the game. The build compiles against a copy of the game's code with every member
 made public, so `nameof` works on private methods too.
 
-- **`TimeControlButton_OnClick.Prefix`** runs before the game's `OnClick`. When the fast button is clicked
-  while the game is already at its fast speed, it raises the speed and returns `false`, which stops the
-  game's own `OnClick` from running. In every other case it returns `true`, and the game handles the click
-  as usual.
+- **`TimeControlButton_OnClick`** has a prefix and a postfix. The prefix runs before the game's `OnClick`
+  and notes whether this is a second click on the fast button: the game is already at its fast speed, but
+  not yet at the higher one. The game's `OnClick` always runs. Then the postfix raises the speed if the
+  prefix said so. Harmony passes the prefix's answer to the postfix in the `__state` parameter.
 - **`Controls_Update.Postfix`** runs after the game's `Update`, which already handles the keys `1` to `3`.
-  When `4` is pressed and no popup or dialogue is open, it switches to fast and raises the speed.
+  When the super-fast key (`4` by default) is pressed and no popup or dialogue is open, it switches to fast
+  and raises the speed.
+
+Both patches leave the game alone when another mod has blocked the same click or key. Harmony tells a patch
+this with the `__runOriginal` parameter: it is `false` when another mod's prefix stopped the game's method.
+The speed is only raised while the game really is at its fast speed, so another mod that keeps the game
+from switching to fast also keeps it from going faster.
+
+The player can change the super-fast key on the Hotkeys tab of the ModMenus mod. `source/ModMenusKeys.cs`
+reads that key. It finds ModMenus by name while the game runs, so the mod doesn't need ModMenus to build or
+to run: without ModMenus, the key is `4`.
 
 The speed comes from the in-game variable `FastForward_Multiplier`. The ModMenus mod stores its slider's
 value there. Without ModMenus the variable doesn't exist, and the mod uses 5x.
 
 The files in `source/assets/` are copied into the mod's folder as they are:
 
-- `JSON/Mod Menu/modmenu.json` tells ModMenus to show a slider for `FastForward_Multiplier`.
-- `JSON/Constants/constants.json` adds the slider's label text to the game's text list.
+- `JSON/Mod Menu/modmenu.json` tells ModMenus to show a slider for `FastForward_Multiplier` and a key row
+  for `FastForward_Key`.
+- `JSON/Constants/constants.json` adds the slider's and the key row's label text to the game's text list.
 - `thumb.png` is the picture the game shows in its Mods screen and uploads to the Workshop.
 - `steam description.txt` is the text for the mod's Workshop page (see Publishing below).
 
 ## Make your own mod
 
-1. Copy this repo, or fork it on GitHub.
+1. Copy this repo.
 2. Rename `source/FastForward.csproj` and `source/FastForward.cs`, and update the project's path in
    `FastForward.sln`.
 3. Change the values at the top of the csproj. Each one fills in a field of `info.json`:
@@ -145,9 +156,10 @@ Version numbers have three parts:
 - The second number goes up when an update adds something and everything old still works.
 - The third number goes up for a fix.
 
-Each version gets one line under `[h3]Changelog[/h3]` at the bottom of `steam description.txt`. Keep the
-line, counted from the version number, to 100 characters or fewer: the game's change-note box for Workshop
-updates cuts off after 100 characters.
+Each version gets one line under `[h3]Changelog[/h3]` at the bottom of `steam description.txt`, newest
+first. Keep the 5 newest lines plus every major version (1.0.0, 2.0.0 and so on), and remove older ones.
+Keep the line, counted from the version number, to 100 characters or fewer: the game's change-note box for
+Workshop updates cuts off after 100 characters.
 
 ## Tests
 
@@ -168,12 +180,12 @@ on your PC, outside the game.
 
 `tests/Common/PatchTargetAssert.cs` does the work; the test file only names the mod's namespace.
 
-`ModMenuTests.cs` checks that the code's default speed and the ModMenus slider's default are the same.
+`ModMenuTests.cs` checks that the code's defaults (the speed and the key) match the ModMenus menu's.
 
 ### Behaviour tests (advanced)
 
-The other tests run the patches and check what they do: one click, two clicks, the `4` key, blocked
-hotkeys, and odd speed settings. That is harder than it sounds, because parts of Unity (`Camera.main`,
+The other tests run the patches and check what they do: one click, two clicks, the `4` key, a key changed
+in ModMenus, blocked hotkeys, another mod blocking the click or the key, and odd speed settings. That is harder than it sounds, because parts of Unity (`Camera.main`,
 `Input`, `GetComponent`, text colours) only work inside the running game.
 
 `TestGame.cs` solves this with `Seams`. It uses Harmony's reverse patching to make copies of the patch
@@ -215,18 +227,18 @@ The test project isn't in `FastForward.sln`, so the solution builds without IM-I
 `tools/publish_workshop.py` builds the mod and uploads it with [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD):
 the content, `thumb.png`, the title, the whole `steam description.txt` and the changelog line for the
 current version as the change note. Nothing is copy-pasted. It only publishes a mod whose files are
-committed and pushed to GitHub, so the Workshop always matches the published source.
+committed, so the Workshop always matches a commit.
 
 1. One time: install SteamCMD to `C:\steamcmd` (or set the `STEAMCMD` environment variable to
    `steamcmd.exe`), and log in once with `steamcmd +login <your Steam user name> +quit`. Type your password
    and Steam Guard code there; SteamCMD remembers the login.
-2. Run `python tools/check_repo.py`. It checks the csproj values and that the changelog has a line for
-   the current version.
+2. Run `python tools/check_repo.py`. It checks the csproj values, and that the changelog starts with the
+   current version and keeps only the 5 newest versions plus every major version (1.0.0, 2.0.0 and so on).
 3. The first upload: `python tools/publish_workshop.py --new`. It creates an unlisted Workshop item and
    writes its id into the csproj as `<WorkshopID>`; commit that. On the item's page, add the tags, add
    [Harmony Checker](https://steamcommunity.com/sharedfiles/filedetails/?id=3102983863) under
    Add/Remove Required Items, and make the mod public.
-4. Updates: raise `Version`, add a changelog line, commit, push, and run `python tools/publish_workshop.py`.
+4. Updates: raise `Version`, add a changelog line at the top, commit, and run `python tools/publish_workshop.py`.
    `--description-only` updates only the page text; `--dry-run` shows what would be uploaded.
 
 FastForward itself is published from [Tel-Mod-Library](https://github.com/ui3TD/Tel-Mod-Library), so this

@@ -2,9 +2,11 @@
 
   - the csproj values that go into info.json are valid: <Tags> is a JSON array of
     strings and <JSONLoadOrder> a whole number (the build checks this too)
-  - source/assets/steam description.txt has a [h3]Changelog[/h3] line for the csproj
-    <Version> (a 1.0.0 mod may have no changelog yet)
+  - source/assets/steam description.txt has a [h3]Changelog[/h3] whose first line is the
+    csproj <Version> (a 1.0.0 mod may have no changelog yet)
   - that line fits the Workshop change-note box (100 characters after "- ")
+  - the changelog is newest first and keeps only the newest 5 entries plus every major
+    version (1.0.0, 2.0.0, ...)
   - the description has no double quote, which SteamCMD can't upload
 
 Usage:
@@ -19,7 +21,10 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOD_DIR = os.path.join(REPO, "source")
+CHANGELOG_HEADING = "[h3]Changelog[/h3]"
 CHANGELOG_LIMIT = 100  # the Workshop change-note box cuts off after this many characters
+CHANGELOG_RECENT = 5  # the changelog keeps this many newest entries, plus every major version
+CHANGELOG_LINE_RE = re.compile(r"^- (\d+)\.(\d+)\.(\d+): ")
 
 
 def read_csproj(mod_dir, optional=()):
@@ -36,6 +41,23 @@ def read_csproj(mod_dir, optional=()):
             sys.exit("No <{}> in {}".format(name, projects[0]))
         props[name] = match.group(1).strip() if match else None
     return projects[0], props
+
+
+def changelog_version(line):
+    """Returns (major, minor, patch) of a "- <version>: ..." changelog line, or None."""
+    match = CHANGELOG_LINE_RE.match(line)
+    return tuple(int(g) for g in match.groups()) if match else None
+
+
+def is_major(version):
+    """1.0.0, 2.0.0, ...; 0.x versions are pre-release, not major versions."""
+    return version[0] >= 1 and version[1:] == (0, 0)
+
+
+def trim_changelog(lines):
+    """Sorts changelog lines newest first and keeps the newest CHANGELOG_RECENT plus every major version."""
+    ordered = sorted(lines, key=changelog_version, reverse=True)
+    return [line for i, line in enumerate(ordered) if i < CHANGELOG_RECENT or is_major(changelog_version(line))]
 
 
 def check_mod(mod_dir):
@@ -58,16 +80,22 @@ def check_mod(mod_dir):
         description = f.read().replace("\r\n", "\n")
     if '"' in description:
         problems.append("steam description.txt has a double quote; SteamCMD can't upload it")
-    _, found, changelog = description.partition("[h3]Changelog[/h3]")
+    _, found, changelog = description.partition(CHANGELOG_HEADING)
     if not found:
         if props["Version"] != "1.0.0":
-            problems.append("no [h3]Changelog[/h3] in steam description.txt")
+            problems.append("no {} in steam description.txt".format(CHANGELOG_HEADING))
         return problems
-    match = re.search(r"^- {}: .*$".format(re.escape(props["Version"])), changelog, re.M)
-    if not match:
-        problems.append("no changelog line for version " + props["Version"])
-    elif len(match.group(0)) - 2 > CHANGELOG_LIMIT:
-        problems.append("changelog line over {} characters: {}".format(CHANGELOG_LIMIT, match.group(0)))
+    lines = [line for line in changelog.strip().split("\n") if line.strip()]
+    bad = [line for line in lines if not changelog_version(line)]
+    if bad:
+        return problems + ["changelog line is not '- <version>: ...': " + bad[0]]
+    first = lines[0] if lines else ""
+    if not first.startswith("- {}: ".format(props["Version"])):
+        problems.append("first changelog line is not version {}: {}".format(props["Version"], first))
+    elif len(first) - 2 > CHANGELOG_LIMIT:
+        problems.append("changelog line over {} characters: {}".format(CHANGELOG_LIMIT, first))
+    if lines != trim_changelog(lines):
+        problems.append("changelog must be newest first with only the newest 5 entries plus major versions")
     return problems
 
 

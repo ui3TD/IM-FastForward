@@ -13,8 +13,8 @@ SteamCMD, so nothing is copy-pasted and the game does not need to be open:
 With --description-only, only the title and description are updated: nothing is
 built, and the content, preview and change note on Steam stay as they are.
 
-Publishing is refused unless the mod's files are committed and pushed to GitHub,
-so the Workshop always matches the published source.
+Publishing is refused unless the mod's files are committed, so the Workshop
+always matches a commit.
 
 The Workshop item is the csproj's <WorkshopID>. With --new, a mod with no
 <WorkshopID> yet is published as a new item, unlisted, and the new item's id is
@@ -167,13 +167,10 @@ def git(*args):
     return subprocess.run(["git", "-C", REPO] + list(args), check=True, capture_output=True, text=True).stdout.strip()
 
 
-def check_pushed(paths):
-    """Exits unless paths are committed and HEAD is on GitHub."""
+def check_committed(paths):
+    """Exits unless paths are committed."""
     if git("status", "--porcelain", "--", *paths):
-        sys.exit("Uncommitted changes in {}; commit and push them first.".format(", ".join(paths)))
-    git("fetch", "--quiet", "origin")
-    if not git("branch", "-r", "--contains", "HEAD"):
-        sys.exit("HEAD is not pushed to origin; push it first.")
+        sys.exit("Uncommitted changes in {}; commit them first.".format(", ".join(paths)))
 
 
 def vdf_string(value):
@@ -272,7 +269,7 @@ def main():
 
     # Check before building so a build isn't wasted; a dry run only warns.
     try:
-        check_pushed([os.path.relpath(MOD_DIR, REPO)] + SHARED_PATHS)
+        check_committed([os.path.relpath(MOD_DIR, REPO)] + SHARED_PATHS)
     except SystemExit as e:
         if not args.dry_run:
             raise
