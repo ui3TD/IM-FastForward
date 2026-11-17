@@ -24,12 +24,12 @@ namespace FastForward
         // The game's own fast speed, in in-game minutes per second
         public const double BASE_FAST_SPEED = 200d;
 
-        // A safety limit, not a menu option: the Mod Menu slider stops at 20x, and this caps any value the
-        // menu didn't produce (a hand-edited save, an old setting). Each time tick adds speed/4 minutes;
-        // above 28.8x a tick spans over a day and skips onNewDay/onNewWeek.
+        // The highest multiplier. The Mod Menu slider stops at 20x; this caps any value the menu didn't
+        // produce (a hand-edited save, an old setting). Each time tick adds speed/4 minutes; above 28.8x a
+        // tick spans over a day and skips onNewDay/onNewWeek.
         public const double MAX_MULTIPLIER = 28d;
 
-        // Speeds are doubles, so "already at this speed" allows for rounding
+        // How far apart two speeds can be and still count as the same speed
         public const double EPSILON = 0.001d;
 
         /// <summary>
@@ -72,14 +72,14 @@ namespace FastForward
                 return;
             }
 
-            // Use vanilla state transition first so all game-side effects still run as expected.
+            // The game's own switch to fast runs first, with all its usual effects.
             main.Time_SetState(mainScript._time_state.fast);
             SetSuperSpeed();
         }
 
         /// <summary>
-        /// Speeds fast up to super-fast. Only while the game is in its fast state: another mod may have kept it
-        /// from switching to fast, and then time must not run at super-fast while the game shows another speed.
+        /// Speeds fast up to super-fast. Does nothing unless the game is in its fast state, such as when another
+        /// mod kept it from switching to fast.
         /// </summary>
         internal static void SetSuperSpeed()
         {
@@ -94,7 +94,7 @@ namespace FastForward
 
         internal static void SetFastButtonColor(Color32 color)
         {
-            // Any of these Unity objects can be missing, so check each step
+            // Any of these Unity objects can be missing
             if (Camera.main == null)
             {
                 return;
@@ -125,7 +125,7 @@ namespace FastForward
         /// Whether this click is a second click on fast forward, which switches on super-fast: the fast button,
         /// while already at fast but not yet super-fast speed. Read before the click changes the speed.
         /// A prefix runs before the game's method. This one returns nothing, so the game's method always runs;
-        /// the postfix then speeds it up. That way other mods that patch the click still see it.
+        /// the postfix then speeds it up.
         /// </summary>
         /// <param name="__instance">The instance of the TimeControlButton being clicked.</param>
         /// <param name="__runOriginal">False if another mod's prefix blocked the click.</param>

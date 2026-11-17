@@ -202,7 +202,7 @@ def cached_user(steamcmd):
 def upload(steamcmd, user, vdf_path):
     if not os.path.isfile(steamcmd):
         sys.exit("SteamCMD not found at {}; install it or set STEAMCMD.".format(steamcmd))
-    # stdin stays attached so SteamCMD can ask for a password or Steam Guard code if the login has expired.
+    # stdin stays attached: SteamCMD asks for a password or Steam Guard code here if the login has expired.
     proc = subprocess.Popen([steamcmd, "+login", user, "+workshop_build_item", vdf_path, "+quit"],
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors="replace")
     assert proc.stdout is not None
@@ -267,7 +267,7 @@ def main():
     if len(description) > MAX_DESCRIPTION:
         sys.exit("Description is {} characters; Steam allows {}.".format(len(description), MAX_DESCRIPTION))
 
-    # Check before building so a build isn't wasted; a dry run only warns.
+    # Checked before building; a dry run only warns.
     try:
         check_committed([os.path.relpath(MOD_DIR, REPO)] + SHARED_PATHS)
     except SystemExit as e:
@@ -283,7 +283,7 @@ def main():
     if args.new:
         fields["visibility"] = UNLISTED
     if not args.description_only:
-        # Start clean so files removed from the mod's assets don't linger.
+        # Empties the staging folder, including files since removed from the mod's assets.
         clean_dir(STAGING)
         build(csproj, STAGING)
         content_dir = check_built(props, STAGING)
