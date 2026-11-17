@@ -161,6 +161,10 @@ first. Keep the 5 newest lines plus every major version (1.0.0, 2.0.0 and so on)
 Keep the line, counted from the version number, to 100 characters or fewer: the game's change-note box for
 Workshop updates cuts off after 100 characters.
 
+Code comments say what the code does, or how the game or other mods behave ("The game calls this twice per
+frame."). They don't give reasons for the code's design, such as a purpose, a rejected alternative or a
+risk it guards against. Put those reasons in the commit message.
+
 ## Tests
 
 ```bash
